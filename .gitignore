@@ -1,0 +1,12 @@
+# Segredos (chaves do Supabase e da IA)
+.env
+
+# Ambiente virtual do Python
+.venv/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Dados baixados e gerados pelo pipeline
+data/
