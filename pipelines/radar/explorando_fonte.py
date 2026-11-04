@@ -14,7 +14,7 @@ SEPARADOR = ';'
 
 caminho = Path(sys.argv[1])
 df = pd.read_csv(caminho, sep=SEPARADOR, encoding=CODIFICACAO)
-
+df_valor = df["valor"].str.startswith("-").sum() ##verifica se existem valores negativos na coluna valor
 
 print(f"Tamanho: {len(df)} linhas x {len(df.columns)} colunas")
 print("Colunas:")
@@ -28,3 +28,5 @@ print(df["funcao"].value_counts())
 
 print("\nEXEMPLOS DE VALOR")
 print(df["valor"].head(5).tolist())
+
+print(f"\nVALORES NEGATIVOS: {df_valor}")
