@@ -13,6 +13,7 @@ params = {
     "mesAnoInicio": "07/2026",
     "mesAnoFim": "07/2026",
     "uf": "CE",
+    "tipoFavorecido": "Administração Pública Municipal",
     "pagina": 1, 
 } ###p informações da API --parametros 
 
@@ -22,5 +23,5 @@ print(resposta.status_code)
 if resposta.status_code == 200:
     dados = resposta.json()
     print(len(dados))
-    print(dados[0]["nomePessoa"]) # Exibe o primeiro registro da resposta JSON
-    print(dados[-1]["nomePessoa"]) # Exibe o último registro da resposta JSON
+    for registro in dados:
+        print(registro["nomePessoa"], "|", registro["tipoPessoa"])
