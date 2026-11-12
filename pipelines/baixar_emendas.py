@@ -4,6 +4,7 @@ import requests
 from dotenv import load_dotenv
 import json 
 from pathlib import Path
+from datetime import date
 
 load_dotenv()
 token = os.getenv("PORTAL_TRANSPARENCIA_TOKEN")
@@ -29,8 +30,7 @@ def baixar_ano(ano):
         resposta = requests.get(url, headers=headers, params=params)
         print("pagina", pagina, "status", resposta.status_code)
 
-        if resposta.status_code != 200:
-            break
+        resposta.raise_for_status()
 
         dados = resposta.json()
         print("registros:", len(dados))
@@ -44,6 +44,7 @@ def baixar_ano(ano):
         pagina += 1
         time.sleep(0.5)
 
+
 #for mes in range(1, 4):
 #    print("=== mês", mes, "===")
 #   baixar_mes(2026, mes)
@@ -55,6 +56,7 @@ def baixar_ano(ano):
 #        print("=== ano", ano, "mês", mes, "===")
 #        baixar_mes(ano, mes)
 
-for ano in range(2014, 2027):
-    print("=== ano", ano, "===")
-    baixar_ano(ano)
+if __name__ == "__main__":
+    for ano in range(2014, date.today().year + 1): ###se colocar só o datetime, vai trazer a data de hoje ocmpleta. precisa só do .year indicando ano 
+            print("=== ano", ano, "===")
+            baixar_ano(ano)

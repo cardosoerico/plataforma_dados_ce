@@ -11,7 +11,7 @@ caminho = Path(sys.argv[1])
 sql = caminho.read_text(encoding="utf-8")
 
 with conectar() as conn:
-    cursor = conn.execute(sql) ##manda o banco de dados executar o sql que está no arquivo
+    cursor = conn.execute(sql) ##se o comando devolveu linhas, mostra cada uma
     if cursor.description: ##manda o sql para o banco de dados 
         for linha in cursor.fetchall():
             print(linha)

@@ -4,6 +4,7 @@ import requests
 from dotenv import load_dotenv
 import json 
 from pathlib import Path
+from datetime import date 
 
 load_dotenv()
 token = os.getenv("PORTAL_TRANSPARENCIA_TOKEN")
@@ -34,8 +35,7 @@ def baixar_mes(ano, mes):
         resposta = requests.get(url, headers=headers, params=params)
         print("pagina", pagina, "status", resposta.status_code)
 
-        if resposta.status_code != 200:
-            break
+        resposta.raise_for_status() ###quando dá erro, interrompe o script e traz a mensagem erro
 
         dados = resposta.json()
         print("registros:", len(dados))
@@ -49,13 +49,17 @@ def baixar_mes(ano, mes):
         pagina += 1
         time.sleep(0.5)
 
-#for mes in range(1, 4):
-#    print("=== mês", mes, "===")
-#   baixar_mes(2026, mes)
+def mes_anterior(hoje):
+    if hoje.month == 1:
+        return hoje.year -1, 12
+    return hoje.year, hoje.month - 1
 
-for ano in range(2014, 2027):
-    for mes in range(1, 13):
-        if ano == 2026 and mes > 10:
-            break
-        print("=== ano", ano, "mês", mes, "===")
-        baixar_mes(ano, mes)
+
+
+if __name__ == "__main__":
+    limite = mes_anterior(date.today())
+    for ano in range(2014, limite[0] + 1):
+        for mes in range(1, 13):
+            if (ano, mes) > limite: break 
+            print("=== ano", ano, "mês", mes, "===")
+            baixar_mes(ano, mes)

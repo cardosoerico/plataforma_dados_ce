@@ -28,14 +28,14 @@ pulados = 0
 
 for fonte in ["recursos_recebidos", "emendas"]:
     pasta = PASTA_RAW / fonte
-    for caminho in sorted(pasta.glob("*.json")): ##varre o que já está no bucket
+    for caminho in sorted(pasta.glob("*.json")): ##varre os arquivos JSON da pasta local
         chave = montar_chave(fonte, caminho) #define chave com os objetos que estamos trabalhando 
         if chave in existentes: #se a chave já estiver lá, 
             pulados += 1 #pula 
             continue #manda continuar
         cliente_s3.upload_file(str(caminho), S3_BUCKET, chave) #faz o upload do novo
         enviados += 1 #vê quais foram enviados 
-        if enviados %200 == 0: #se der 200% do que tem lá (ou seja, duplicados), zera o novo
+        if enviados %200 == 0: #mostra o andamento a cada 200 arquivos enviados
             print("enviados até agora:", enviados)
 
 print("enviados:", enviados, "| pulados: ", pulados)

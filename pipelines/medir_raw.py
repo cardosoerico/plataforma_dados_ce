@@ -11,8 +11,8 @@ arquivos_recursos = [a for a in PASTA_RECURSOS.rglob("*") if a.is_file()]
 total_bytes = sum(a.stat().st_size for a in arquivos_recursos)
 print(f"recursos: {len(arquivos_recursos), total_bytes / 1024**2}")
 
-meses_arquivos_emendas = {a.name[:6] for a in PASTA_EMENDAS.glob("*json")}
-print(len(meses_arquivos_emendas), sorted(meses_arquivos_emendas)[:3])
+anos_arquivos_emendas = {a.name[:4] for a in PASTA_EMENDAS.glob("*json")}
+print(len(anos_arquivos_emendas), sorted(anos_arquivos_emendas)[:3])
 
 meses_arquivos_recursos = {a.name[:6] for a in PASTA_RECURSOS.glob("*json")}
 print(len(meses_arquivos_recursos), sorted(meses_arquivos_recursos)[:3])
