@@ -6,6 +6,25 @@ import json
 from pathlib import Path
 from datetime import date 
 
+# PROCESSO
+# 1. Resultado final: um arquivo JSON por página e por mês em data/raw/recursos_recebidos,
+#    nomeado AAAAMM_pagina_NNNN.json, de jan/2014 até o mês anterior ao de hoje.
+# 2. Entrada: a API do Portal da Transparência (/despesas/recursos-recebidos), o token do
+#    .env e os filtros fixos UF = CE e favorecido = Administração Pública Municipal.
+# 3. Regra: para cada mês, pedir página 1, 2, 3... até a API devolver uma página vazia;
+#    cada página com dados vira um arquivo; páginas já baixadas são puladas.
+# 4. Passos: calcular o último mês válido -> para cada ano e mês até o limite -> pedir a
+#    página -> parar o script se a API der erro -> se vier vazia, encerrar o mês -> senão
+#    gravar o arquivo, avançar a página e esperar 0,5 s.
+# 5. Ferramentas: requests.get(..., params=...) consulta; raise_for_status() interrompe em
+#    erro HTTP; Path.exists() permite retomar; json.dump(ensure_ascii=False) mantém os
+#    acentos; time.sleep(0.5) evita sobrecarregar a API; comparar o par (ano, mes) com o
+#    limite funciona porque o Python compara o ano primeiro; "if __name__ == '__main__'"
+#    impede o download quando outro script apenas importa baixar_mes.
+# 6. Caso de borda: (lido no código, não testado) mês sem dados não gera arquivo; arquivo
+#    cortado por interrupção é tratado como página pronta; sem timeout nem nova tentativa;
+#    token inválido deve interromper no primeiro pedido.
+
 load_dotenv()
 token = os.getenv("PORTAL_TRANSPARENCIA_TOKEN")
 
