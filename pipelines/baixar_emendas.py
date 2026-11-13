@@ -6,6 +6,26 @@ import json
 from pathlib import Path
 from datetime import date
 
+# PROCESSO
+# 1. Resultado final: um arquivo JSON por página e por ano em data/raw/emendas, nomeado
+#    AAAA_pagina_NNNN.json, de 2014 até o ano de hoje.
+# 2. Entrada: a API do Portal da Transparência (/emendas), o token do .env e o ano. Não há
+#    outros filtros no código (nem UF).
+# 3. Regra: para cada ano, pedir página 1, 2, 3... até a API devolver uma página vazia;
+#    cada página com dados vira um arquivo; páginas já baixadas são puladas.
+# 4. Passos: para cada ano de 2014 até o atual -> pedir a página -> parar o script se a API
+#    der erro -> se vier vazia, encerrar o ano -> senão gravar, avançar a página, esperar
+#    0,5 s.
+# 5. Ferramentas: date.today().year dá o ano atual (+1 porque range não inclui o último
+#    valor); requests.get(..., params=...) consulta; raise_for_status() interrompe em erro
+#    HTTP; Path.exists() permite retomar; json.dump(ensure_ascii=False) mantém os acentos;
+#    time.sleep(0.5) evita sobrecarregar a API; "if __name__ == '__main__'" impede o
+#    download quando outro script apenas importa baixar_ano.
+# 6. Caso de borda: (lido no código, não testado) as emendas mudam durante o ano, mas uma
+#    página já baixada nunca é atualizada, então rodar de novo mantém dados antigos (motivo
+#    dos snapshots da Parte 3); ano sem dados não gera arquivo; arquivo cortado por
+#    interrupção é tratado como pronto; sem timeout nem nova tentativa.
+
 load_dotenv()
 token = os.getenv("PORTAL_TRANSPARENCIA_TOKEN")
 

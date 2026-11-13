@@ -10,3 +10,6 @@ __pycache__/
 
 # Dados baixados e gerados pelo pipeline
 data/
+
+# Dados do DOCS 
+docs/

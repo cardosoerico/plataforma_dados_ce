@@ -2,6 +2,23 @@ import json
 from pathlib import Path 
 import pandas as pd
 
+# PROCESSO
+# 1. Resultado final: medidas impressas sobre as emendas de 2026 (linhas, duplicatas,
+#    totais de empenhado/liquidado/pago, top 10 funções, recorte do Ceará). Nada é gravado.
+# 2. Entrada: os arquivos data/raw/emendas/2026_pagina_*.json, com valores em texto
+#    brasileiro (ex.: "1.200,50").
+# 3. Regra: juntar todas as páginas numa tabela, converter os valores para número e olhar
+#    a tabela por vários ângulos antes de decidir como modelá-la.
+# 4. Passos: ler e juntar as páginas -> converter valorEmpenhado/valorLiquidado/valorPago
+#    -> ver tamanho, emendas distintas e linhas repetidas -> somar os valores -> agrupar
+#    por função -> filtrar destino no CE -> olhar a função "Encargos especiais".
+# 5. Ferramentas: glob + sorted lê as páginas em ordem; json.load + extend junta as listas;
+#    pd.DataFrame monta a tabela; str.replace(regex=False) + astype(float) converte os
+#    valores; nunique() e duplicated() medem repetição; groupby(...).sum().sort_values()
+#    resume; str.endswith filtra o texto.
+# 6. Caso de borda: (lido no código, não testado) sem arquivos do ano, a tabela fica sem
+#    colunas e a conversão falha com KeyError; localidadeDoGasto nula quebraria o filtro
+#    do Ceará (usar na=False). Conversão com float, não com decimal.
 
 pd.set_option("display.max_columns", None) ##Mostra todas as colunas
 pd.options.display.float_format = "{:,.2f}".format ##mostra no formato completo, sem abreviação
