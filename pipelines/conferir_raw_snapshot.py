@@ -1,6 +1,7 @@
 import json 
 from pathlib import Path
 
+EXTRAIDO_EM = "2026-11-10"
 
 def contagem_por_periodo(fonte): 
     pasta = Path(__file__).parents[1] / "data" / "raw" / fonte
@@ -14,10 +15,20 @@ def contagem_por_periodo(fonte):
         contagem[mes]["registros"] += len(registros)
     return contagem 
 
+def montar_manifesto(fonte, periodo, numeros):
+    return {
+        "fonte": fonte, 
+        "periodo": periodo, 
+        "extraido_em": EXTRAIDO_EM,
+        "paginas": numeros["paginas"],
+        "registros": numeros["registros"]
+    }
+
+def chave_do_manifesto(fonte, periodo):
+    ano = periodo[:4]
+    return f"raw/{fonte}/ano={ano}/extraido_em={EXTRAIDO_EM}/manifesto_{periodo}.json"
 
 if __name__ == "__main__":
-    for fonte in ["recursos_recebidos", "emendas"]:
-        contagem = contagem_por_periodo(fonte)
-        total_paginas = sum(v["paginas"] for v in contagem.values())
-        total_registros = sum(v["registros"] for v in contagem.values())
-        print(fonte, len(contagem), total_paginas, total_registros)
+    print(montar_manifesto("recursos_recebidos", "202401", {"paginas": 33, "registros": 482}))
+    print(chave_do_manifesto("recursos_recebidos", "202401"))
+    print(chave_do_manifesto("emendas", "2026"))
